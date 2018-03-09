@@ -1,4 +1,4 @@
-![](http://og1yl0w9z.bkt.clouddn.com/18-3-9/45811958.jpg)
+![](http://og1yl0w9z.bkt.clouddn.com/18-3-9/80874149.jpg)
 
 [EN](#Requirements) | [中文](#中文说明)
 
