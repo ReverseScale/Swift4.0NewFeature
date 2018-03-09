@@ -1,4 +1,4 @@
-![](http://og1yl0w9z.bkt.clouddn.com/18-3-9/79593477.jpg)
+![](http://og1yl0w9z.bkt.clouddn.com/18-3-9/58906001.jpg)
 
 [EN](#Requirements) | [中文](#中文说明)
 
@@ -751,4 +751,3 @@ class MyClass : NSObject {
     func wobble() { } //不会包含隐式的 @objc
 }
 ```
-
