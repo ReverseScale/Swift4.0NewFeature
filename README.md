@@ -1,8 +1,6 @@
 
 [EN](#Requirements) | [中文](#中文说明)
 
-[EN](#Requirements) | [中文](#中文说明)
-
 # Swift 4.0 NewFeature
 
 DemoSwift 4.0 New Feature Summary Demo
