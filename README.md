@@ -1,6 +1,8 @@
 
 [EN](#Requirements) | [中文](#中文说明)
 
+[EN](#Requirements) | [中文](#中文说明)
+
 # Swift 4.0 NewFeature
 
 DemoSwift 4.0 New Feature Summary Demo
@@ -13,8 +15,8 @@ The key-path is usually used in Key-Value Coding (KVC) and Key-Value Watch (KVO)
 ```
 // User class
 class User: NSObject{
-    @objc var name:String = ""  // name
-    @objc var age:Int = 0  // age
+    @objc var name:String = ""  // name
+    @objc var age:Int = 0  // age
 }
  
 // Create a User instance object
@@ -36,8 +38,8 @@ Use the #keyPath() method to avoid problems caused by misspellings.
 ```
 // User Class
 class User: NSObject{
-    @objc var name:String = ""  // name
-    @objc var age:Int = 0  // age
+    @objc var name:String = ""  // name
+    @objc var age:Int = 0  // age
 }
  
 // Create a User instance object
@@ -193,37 +195,41 @@ extension GenericDictionary {
     }
 }
  
-// Array下标
+// Array index
 let nameAndMoons = earthData[["moons", "name"]]        // [1, "Earth"]
-// Set下标
+// Set index
 let nameAndMoons2 = earthData[Set(["moons", "name"])]  // [1, "Earth"]
 ```
 ----
-### 四、Codable 序列化
+### Codable serialization
 
-如果要将一个对象持久化，需要把这个对象序列化。过去的做法是实现 NSCoding 协议，但实现 NSCoding 协议的代码写起来很繁琐，尤其是当属性非常多的时候。
-Swift4 中引入了 Codable 协议，可以大大减轻了我们的工作量。我们只需要让需要序列化的对象符合 Codable 协议即可，不用再写任何其他的代码。
+If you want to persist an object, you need to serialize the object. The past practice was to implement the NSCoding protocol, but the code to implement the NSCoding protocol was cumbersome to write, especially when there were many attributes.
+The Codable protocol was introduced in Swift4, which can greatly reduce our workload. We only need to make the serialized object conform to the Codable protocol, without writing any other code.
+
 ```
 struct Language: Codable {
     var name: String
     var version: Int
 }
 ```
-1.Encode 操作
-我们可以直接把符合了 Codable 协议的对象 encode 成 JSON 或者 PropertyList。
+
+1.Encode operation
+We can encode objects that conform to the Codable protocol directly into JSON or PropertyList.
+
 ```
 let swift = Language(name: "Swift", version: 4)
  
-//encoded对象
+// Encoded object
 let encodedData = try JSONEncoder().encode(swift)
  
-//从encoded对象获取String
+// Get a String from the encoded object
 let jsonString = String(data: encodedData, encoding: .utf8)
 print(jsonString)
 ```
 ![](http://og1yl0w9z.bkt.clouddn.com/18-1-5/81600262.jpg)
 
-2.Decode 操作
+2.Decode operation
+
 ```
 let decodedData = try JSONDecoder().decode(Language.self, from: encodedData)
 print(decodedData.name, decodedData.version)
@@ -231,8 +237,8 @@ print(decodedData.name, decodedData.version)
 ![](http://og1yl0w9z.bkt.clouddn.com/18-1-5/80877317.jpg)
 
 ----
-### 五、Subtring
-Swift 4 中有一个很大的变化就是 String 可以当做 Collection 来用，并不是因为 String 实现了 Collection 协议，而是 String 本身增加了很多 Collection 协议中的方法，使得 String 在使用时看上去就是个 Collection。
+### Subtring
+One of the big changes in Swift 4 is that Strings can be used as Collections, not because Strings implement the Collection protocol, but String itself adds a lot of methods in the Collection protocol, making Strings look like Collections when used.
 ```
 let str = "hangge.com"
  
@@ -242,22 +248,24 @@ print(str.suffix(5)) // "e.com"
 print(str.dropFirst()) // "angge.com"
 print(str.dropLast()) // "hangge.co"
 ```
-比如上面的样例，我们使用一些 Collection 协议的方法对字符串进行截取，只不过它们的返回结果不是 String 类型，而是 Swift4 新增的 Substring 类型。
 
-1.为何要引入 Substring？
-既然我们想要的到的就是字符串，那么直接返回 String 就好了，为什么还要多此一举返回 Substring。原因只有一个：性能。具体可以参考下图：
-当我们用一些 Collection 的方式得到 String 里的一部分时，创建的都是 Substring。Substring 与原 String 是共享一个 Storage。这意味我们在操作这个部分的时候，是不需要频繁的去创建内存，从而使得 Swift 4 的 String 相关操作可以获取比较高的性能。
-而当我们显式地将 Substring 转成 String 的时候，才会 Copy 一份 String 到新的内存空间来，这时新的 String 和之前的 String 就没有关系了。
+For example, in the above example, we use some methods of the Collection protocol to intercept strings, but their return result is not a String type, but a new Substring type in Swift4.
 
-2.使用 Substring 的注意事项
-由于 Substring 与原 String 是共享存储空间的，只要我们使用了 Substring，原 String 就会存在内存空间中。只有 Substring 被释放以后，整个 String 才会被释放。
-而且 Substring 类型无法直接赋值给需要 String 类型的地方，我们必须用 String() 包一层。当然这时系统就会通过复制创建出一个新的字符串对象，之后原字符串就会被释放。
+1. Why introduce Substring?
+Since all we want is a string, it would be nice to just return a String. Why do we have to return Substring more than once? There is only one reason: performance. Specifically refer to the following figure:
+When we use some Collection methods to get part of a String, we create Substrings. Substring shares a Storage with the original String. This means that when we operate this section, we do not need to create memory frequently, which makes Swift 4 String-related operations to achieve higher performance.
+When we explicitly convert a Substring to a String , we will copy a String to the new memory space. At this point, the new String is not related to the previous String.
 
-3.使用样例
-这里对 String 进行扩展，新增一个 subString 方法。直接可以根据起始位置（Int 类型）和需要的长度（Int 类型），来截取出子字符串。
+2. Considerations for using Substring
+Since Substring and the original String are shared storage space, as long as we use Substring, the original String will exist in the memory space. The entire String is released only after Substring is released.
+And the Substring type can't be assigned directly to the place where the String type is needed. We must use String() to wrap a layer. Of course, the system will create a new string object by copying, and then the original string will be released.
+
+3. Use the sample
+This extends String and adds a subString method. You can directly truncate substrings based on the starting position (Int type) and the required length (Int type).
+
 ```
 extension String {
-    //根据开始位置和长度截取字符串
+    // Choosing a string based on start position and length
     func subString(start:Int, length:Int = -1) -> String {
         var len = length
         if len == -1 {
@@ -269,37 +277,40 @@ extension String {
     }
 }
 ```
-使用样例：
+
+Use the sample:
+
 ```
 let str1 = "欢迎访问hangge.com"
 let str2 = str1.subString(start: 4, length: 6)
 print("原字符串：\(str1)")
 print("截取出的字符串：\(str2)")
 ```
-运行结果如下：
+
+The operating results are as follows:
 
 ![](http://og1yl0w9z.bkt.clouddn.com/18-1-5/34732691.jpg)
 
-注意：这个方法最后我们会将 Substring 显式地转成 String 再返回。
+Note: At the end of this method we will explicitly convert Substring to String and return.
 
 ----
-### 六、废除 swap 方法
+### Cancel the swap method
 
-（1）过去我们会使用 swap(_:_:) 来将两个变量的值进行交换：
+(1) In the past we used swap(: :) to swap the values of two variables:
 ```
 var a = 1
 var b = 2
 swap(&a, &b)
 print(a, b)
 ```
-（2）后面 swap() 方法将会被废弃，建议使用 tuple（元组）特性来实现值交换，也只需要一句话就能实现：
+(2) The latter swap() method will be deprecated. It is recommended to use the tuple feature to implement the value exchange. It also requires only one sentence to be implemented:
 ```
 var a = 1
 var b = 2
 (b, a) = (a, b)
 print(a, b)
 ```
-使用 tuple 方式的好处是，多个变量值也可以一起进行交换：
+The advantage of using the tuple approach is that multiple variable values can also be exchanged together:
 ```
 var a = 1
 var b = 2
@@ -307,78 +318,77 @@ var c = 3
 (a, b, c) = (b, c, a)
 print(a, b, c)
 ```
-（3）补充一下：现在数组增加了个 swapAt 方法可以实现两个元素的位置交换。
+(3) Add: Now that the array has added a swapAt method, you can swap the two elements.
 ```
 var fruits = ["apple", "pear", "grape", "banana"]
-//交换元素位置（第2个和第3个元素位置进行交换）
+// Exchanging element positions (exchanging the 2nd and 3rd element positions)
 fruits.swapAt(1, 2)
 print(fruits)
 ```
 ![](http://og1yl0w9z.bkt.clouddn.com/18-1-5/27210545.jpg)
 
 ----
-### 七、减少隐式 @objc 自动推断
+### Reduce the implicit @objc automatic inference
 
-1.过去的情况（Swift3）
-（1）在项目中如果想把 Swift 写的 API 暴露给 Objective-C 调用，需要增加 @objc。在 Swift 3 中，编译器会在很多地方为我们隐式的加上 @objc。
-（2）比如当一个类继承于 NSObject，那么这个类的所有方法都会被隐式的加上 @objc。
+1. Past (Swift3)
+(1) If you want to expose the API written in Swift to Objective-C calls, you need to increase @objc. In Swift 3, the compiler implicitly adds @objc to us in many places.
+(2) For example, when a class inherits from NSObject, all methods of this class are implicitly added with @objc.
+
 ```
 class MyClass: NSObject {
-    func print() { } // 包含隐式的 @objc
-    func show() { } // 包含隐式的 @objc
+    func print() { } // Include implicit @objc
+    func show() { } // Include implicit @objc
 }
 ```
-（3）但这样做很多并不需要暴露给 Objective-C 也被加上了 @objc。而大量 @objc 会导致二进制文件大小的增加。
+(3) But many of them do not need to be exposed to Objective-C and @objc is added. A large number of @objc will cause the size of the binary file to increase.
 
-2.现在的情况（Swift4）
-（1）在 Swift 4 中隐式 @objc 自动推断只会发生在下面这种必须要使用 @objc 的情况：
-* 覆盖父类的 Objective-C 方法
-* 符合一个 Objective-C 的协议
+2. The current situation (Swift4)
+(1) Implicit @objc auto-inference in Swift 4 will only happen if the @objc must be used:
+* Overriding the Objective-C method of the parent class
+* Meets an Objective-C agreement
 
-（2）大多数地方必须手工显示地加上 @objc。
+(2) Most places must be manually displayed with @objc.
 ```
 class MyClass: NSObject {
-    @objc func print() { } //显示的加上 @objc
-    @objc func show() { } //显示的加上 @objc
-}
+    @objc func print() { } // Shows with @objc
+    @objc func show() { } // Shows with @objc
 ```
-（3）如果在类前加上 @objcMembers，那么它、它的子类、扩展里的方法都会隐式的加上 @objc。
+(3) If @objcMembers is added before the class, then it, its subclasses, and the methods in the extension will implicitly add @objc.
 ```
 @objcMembers
 class MyClass: NSObject {
-    func print() { } //包含隐式的 @objc
-    func show() { } //包含隐式的 @objc
+    func print() { } // Include implicit @objc
+    func show() { } // Include implicit @objc
 }
  
 extension MyClass {
-    func baz() { } //包含隐式的 @objc
+    func baz() { } // Include implicit @objc
 }
 ```
-（4）如果在扩展（extension）前加上 @objc，那么该扩展里的方法都会隐式的加上 @objc。
+(4) If @objc is added before the extension, the method in the extension implicitly adds @objc.
 ```
 class SwiftClass { }
  
 @objc extension SwiftClass {
-    func foo() { } //包含隐式的 @objc
-    func bar() { } //包含隐式的 @objc
+    func foo() { } // Include implicit @objc
+    func bar() { } // Include implicit @objc
 }
 ```
-（5）如果在扩展（extension）前加上 @nonobjc，那么该扩展里的方法都不会隐式的加上 @objc。
+(5) If @nonobjc is added before the extension, the methods in this extension will not implicitly add @objc.
 ```
 @objcMembers
 class MyClass : NSObject {
-    func wibble() { } //包含隐式的 @objc
+    func wibble() { } // Include implicit @objc
 }
  
 @nonobjc extension MyClass {
-    func wobble() { } //不会包含隐式的 @objc
+    func wobble() { } // Does not contain implicit @objc
 }
 ```
 
 ---
 # 中文说明
 
-# Swift4.0NewFeature
 Swift 4.0 新特征汇总演示 Demo
 
 ### 一、Key Paths 新语法
@@ -742,3 +752,4 @@ class MyClass : NSObject {
     func wobble() { } //不会包含隐式的 @objc
 }
 ```
+
